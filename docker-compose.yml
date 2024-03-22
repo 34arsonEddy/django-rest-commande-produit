@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  sqlserver:
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      hostname: '127.0.0.1'
+      environment:
+        ACCEPT_EULA: 'Y'
+        SA_PASSWORD: 'abcd1234@sql'
+      ports:
+        - '1433:1433'
+      volumes:
+        - sqlserver-data:/var/opt/mssql
+  web:
+    build: .
+    command: python3 ./accesproject/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - sqlserver
+
+volumes:
+  sqlserver-data:
+    driver: local
